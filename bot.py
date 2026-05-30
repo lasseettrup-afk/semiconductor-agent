@@ -4,6 +4,7 @@ import datetime
 
 # =============================
 # CONFIG (CHANGE THIS)
+
 # =============================
 
 EMAIL = "your@email.com"
@@ -13,17 +14,18 @@ APP_PASSWORD = "your_app_password"
 # GET REAL DATA
 # =============================
 
-mu = yf.Ticker("MU")
-info = mu.info
-
-gross_margin = info.get("grossMargins", 0) * 100
-revenue_growth = info.get("revenueGrowth", 0) * 100
-
 hist = mu.history(period="6mo")
-price_now = hist["Close"][-1]
-price_3mo = hist["Close"][-60]
 
-price_change = ((price_now - price_3mo) / price_3mo) * 100
+if hist is None or len(hist) < 60:
+    price_change = 0
+else:
+    price_now = hist["Close"].iloc[-1]
+    price_3mo = hist["Close"].iloc[-60]
+
+    if price_3mo == 0:
+        price_change = 0
+    else:
+        price_change = ((price_now - price_3mo) / price_3mo) * 100
 
 # =============================
 # SCORING SYSTEM
